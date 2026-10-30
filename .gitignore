@@ -1,0 +1,21 @@
+# build output
+build/
+cmake-build-*/
+*.o
+*.obj
+*.exe
+*.a
+
+# private data - NEVER commit vaults or keys
+data/
+*.dat
+*.tmp
+*.key
+.env
+
+# editors / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+docs/

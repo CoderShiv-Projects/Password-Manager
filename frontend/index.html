@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personal Password Management and Account Credential Organization System</title>
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.6A16.8 16.8 0 0 0 2 12s3.6 7 10 7a10 10 0 0 0 4.4-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/></symbol>
+</svg>
+
+<!-- ============ Lock screen: create or unlock the vault ============ -->
+<main id="lockScreen" class="lock-screen">
+  <section class="lock-card" aria-labelledby="lockTitle">
+    <svg class="dial" viewBox="0 0 140 140" aria-hidden="true">
+      <g class="dial-ring">
+        <circle cx="70" cy="70" r="62" class="dial-edge"/>
+        <circle cx="70" cy="70" r="52" class="dial-ticks"/>
+      </g>
+      <circle cx="70" cy="70" r="30" class="dial-hub"/>
+      <circle cx="70" cy="64" r="6" class="dial-key"/>
+      <path d="M67 68h6l2 14h-10z" class="dial-key"/>
+    </svg>
+    <h1 id="lockTitle">Personal Password Management and Account Credential Organization System</h1>
+    <p id="lockLead" class="lead">Checking your vault…</p>
+
+    <form id="lockForm" autocomplete="off" novalidate>
+      <label for="masterPassword">Master password</label>
+      <input id="masterPassword" type="password" autocomplete="current-password" maxlength="256" required>
+      <div id="confirmRow" hidden>
+        <label for="masterConfirm">Repeat master password</label>
+        <input id="masterConfirm" type="password" autocomplete="new-password" maxlength="256">
+      </div>
+      <p id="lockError" class="form-error" role="alert" hidden></p>
+      <button id="lockSubmit" class="btn primary wide" type="submit" disabled>Unlock vault</button>
+    </form>
+    <p class="fineprint">College learning prototype. It has not been security audited, so store only fake credentials in it.</p>
+  </section>
+</main>
+
+<!-- ============ Application ============ -->
+<div id="app" class="app" hidden>
+  <aside class="sidebar">
+    <div class="brand">
+      <svg class="icon brand-icon" aria-hidden="true"><use href="#i-key"/></svg>
+      <span class="brand-name">Personal Password Management and Account Credential Organization System</span>
+    </div>
+
+    <nav class="nav" aria-label="Main">
+      <button class="nav-item" data-nav="dashboard" type="button"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>Dashboard</button>
+      <button class="nav-item" data-nav="accounts" type="button"><svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>All accounts<span id="navTotal" class="count"></span></button>
+      <button class="nav-item" id="openGenerator" type="button"><svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>Password generator</button>
+    </nav>
+
+    <div class="nav-group">
+      <h2 class="nav-heading">Categories</h2>
+      <div id="categoryNav" class="nav"></div>
+    </div>
+
+    <button id="lockButton" class="nav-item lock-btn" type="button"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>Lock vault</button>
+  </aside>
+
+  <section class="content">
+    <header class="topbar">
+      <div class="search">
+        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+        <input id="searchInput" type="search" placeholder="Search by website or username   ( / )" aria-label="Search accounts" maxlength="100">
+      </div>
+      <label class="sort">
+        <span class="sr-only">Sort accounts</span>
+        <select id="sortSelect">
+          <option value="name">Name, A to Z</option>
+          <option value="recent">Recently updated</option>
+        </select>
+      </label>
+      <button id="undoButton" class="btn" type="button" disabled><svg class="icon" aria-hidden="true"><use href="#i-undo"/></svg>Undo delete<span id="undoCount" class="count"></span></button>
+      <button id="addButton" class="btn primary" type="button"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Add account</button>
+    </header>
+
+    <div id="saveWarning" class="banner" role="alert" hidden>The last change could not be written to disk. It is held in memory and will be saved with your next change.</div>
+
+    <div id="view" class="view" aria-live="polite"></div>
+  </section>
+</div>
+
+<!-- ============ Dialogs ============ -->
+<dialog id="accountDialog" aria-labelledby="accountDialogTitle">
+  <form id="accountForm" autocomplete="off" novalidate>
+    <h2 id="accountDialogTitle">Add account</h2>
+    <label for="fWebsite">Website or app</label>
+    <input id="fWebsite" name="website" maxlength="100" required>
+    <p class="field-error" data-error-for="website" hidden></p>
+
+    <label for="fUsername">Username or email</label>
+    <input id="fUsername" name="username" maxlength="254" required>
+    <p class="field-error" data-error-for="username" hidden></p>
+
+    <label for="fPassword">Password</label>
+    <div class="input-row">
+      <input id="fPassword" name="password" type="password" maxlength="256" autocomplete="new-password">
+      <button id="fToggle" class="icon-btn" type="button" aria-label="Show password"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg></button>
+      <button id="fGenerate" class="btn" type="button">Generate</button>
+    </div>
+    <p class="field-error" data-error-for="password" hidden></p>
+
+    <label for="fCategory">Category</label>
+    <select id="fCategory" name="category"></select>
+    <p class="field-error" data-error-for="category" hidden></p>
+
+    <p class="field-error" data-error-for="form" hidden></p>
+    <div class="dialog-actions">
+      <button class="btn" type="button" data-close>Cancel</button>
+      <button id="accountSubmit" class="btn primary" type="submit">Add account</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="generatorDialog" aria-labelledby="genTitle">
+  <div class="dialog-body">
+    <h2 id="genTitle">Password generator</h2>
+    <div class="gen-output">
+      <code id="genOutput" aria-live="polite"></code>
+      <button id="genRegenerate" class="icon-btn" type="button" aria-label="Generate another password"><svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+    </div>
+    <div class="meter" aria-hidden="true"><span id="genMeter"></span></div>
+    <p id="genStrength" class="meter-label"></p>
+
+    <label for="genLength">Length: <output id="genLengthValue">20</output></label>
+    <input id="genLength" type="range" min="8" max="128" value="20">
+
+    <fieldset>
+      <legend class="sr-only">Character types</legend>
+      <label class="check"><input id="genLower" type="checkbox" checked> Lowercase letters (a-z)</label>
+      <label class="check"><input id="genUpper" type="checkbox" checked> Uppercase letters (A-Z)</label>
+      <label class="check"><input id="genNumbers" type="checkbox" checked> Numbers (0-9)</label>
+      <label class="check"><input id="genSymbols" type="checkbox" checked> Symbols (!@#$…)</label>
+    </fieldset>
+    <p id="genError" class="field-error" hidden></p>
+
+    <div class="dialog-actions">
+      <button class="btn" type="button" data-close>Close</button>
+      <button id="genCopy" class="btn" type="button"><svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg>Copy</button>
+      <button id="genUse" class="btn primary" type="button" hidden>Use this password</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="confirmDialog" aria-labelledby="confirmTitle">
+  <div class="dialog-body">
+    <h2 id="confirmTitle">Delete this account?</h2>
+    <p id="confirmText"></p>
+    <p class="muted">You can undo the deletion until you lock the vault or restart the application.</p>
+    <div class="dialog-actions">
+      <button class="btn" type="button" data-close>Cancel</button>
+      <button id="confirmDelete" class="btn danger" type="button">Delete account</button>
+    </div>
+  </div>
+</dialog>
+
+<div id="toasts" class="toasts" aria-live="polite" aria-atomic="false"></div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
